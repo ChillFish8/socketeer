@@ -1,0 +1,28 @@
+[package]
+name = "socketeer"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+poem-openapi = { version = "1.2", features = ["redoc", "uuid"] }
+poem = { version = "1.2", features = ["anyhow", "opentelemetry-prometheus", "websocket"] }
+strum = { version = "0.23", features = ["derive"] }
+chrono = { version = "0.4.19", features = ["serde"] }
+reqwest = { version = "0.11.8", features = ["json"] }
+uuid = { version = "0.8.2", features = ["v4"] }
+tracing-subscriber = { version = "0.2.24", features = ["tracing-log"] }
+
+tracing-futures = "0.2.5"
+base64 = "0.13.0"
+num_cpus = "0.2.13"
+lazy_static = "1.4.0"
+tracing = "0.1.29"
+scylla = "0.3.1"
+serde_json = "1"
+thiserror = "1.0.30"
+anyhow = "1"
+concread = "0.2.21"
