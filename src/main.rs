@@ -1,4 +1,9 @@
 mod rest;
+mod db;
+mod utils;
+mod models;
+mod ws;
+mod emitter;
 
 #[macro_use]
 extern crate tracing;
@@ -12,11 +17,13 @@ use std::time::Duration;
 use poem::{Endpoint, EndpointExt, IntoResponse, Request, Response, Result, Route, Server};
 use poem::listener::TcpListener;
 use poem::http::Method;
-use poem_openapi::{OpenApiService, Tags};
+use poem_openapi::OpenApiService;
 
 use concread::arcache::{ARCache, ARCacheBuilder};
 use poem::middleware::Cors;
 use tokio::time::Instant;
+use crate::emitter::EmitterManager;
+
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -32,9 +39,7 @@ async fn main() -> anyhow::Result<()> {
         .unwrap();
 
     let api_service = OpenApiService::new(
-        (
-            rest::RestApi,
-        ),
+        rest::RestApi,
         "Socketeer API",
         "1.0.0"
         )
@@ -47,6 +52,7 @@ async fn main() -> anyhow::Result<()> {
     let app = Route::new()
         .nest("/api/v0", api_service)
         .nest("/ui", ui)
+        .at("/ws/v0/gateway", ws::gateway)
         .at("/spec", poem::endpoint::make_sync(move |_| spec.clone()))
         .with(
             Cors::new()
@@ -56,6 +62,7 @@ async fn main() -> anyhow::Result<()> {
         )
         .around(log)
         .data(session)
+        .data(EmitterManager::new())
         .data(Arc::new(cache));
 
     Server::new(TcpListener::bind("127.0.0.1:8800"))

@@ -125,38 +125,13 @@ impl From<String> for Detail {
 
 
 #[derive(ApiResponse)]
-pub enum JsonResponse<T: Send + Sync + ToJSON> {
+pub enum JsonResponse {
     /// The request was a success.
     #[oai(status = 200)]
-    Ok(Json<T>),
+    Ok,
 
     /// Some part of the request was invalid.
-    #[oai(status = 400)]
-    BadRequest(Json<Detail>),
-
-    /// The provided access token has expired.
+    #[allow(unused)]
     #[oai(status = 401)]
     Unauthorized,
-
-    /// You lack the permissions required to perform this action.
-    #[oai(status = 403)]
-    Forbidden,
-}
-
-impl<T: Send + Sync + ToJSON> JsonResponse<T> {
-    pub fn ok(v: T) -> Self {
-        Self::Ok(Json(v))
-    }
-
-    pub fn bad_request(msg: impl Display) -> Self {
-        Self::BadRequest(Json(Detail::from(msg.to_string())))
-    }
-
-    pub fn forbidden() -> Self {
-        Self::Forbidden
-    }
-
-    pub fn unauthorized() -> Self {
-        Self::Unauthorized
-    }
 }

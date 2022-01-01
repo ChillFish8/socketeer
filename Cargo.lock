@@ -421,6 +421,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "dashmap"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b799062aaf67eb976af3bdca031ee6f846d2f0a5710ddbb0d2efee33f3cc4760"
+dependencies = [
+ "cfg-if",
+ "num_cpus 1.13.1",
+ "parking_lot",
+]
+
+[[package]]
 name = "derive_more"
 version = "0.99.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1189,7 +1200,7 @@ version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e1cf9b1c4e9a6c4de793c632496fa490bdc0e1eea73f0c91394f7b6990935d22"
 dependencies = [
- "dashmap",
+ "dashmap 4.0.2",
  "fnv",
  "futures",
  "js-sys",
@@ -1648,7 +1659,7 @@ dependencies = [
  "bytes 1.1.0",
  "chrono",
  "compress",
- "dashmap",
+ "dashmap 4.0.2",
  "futures",
  "histogram",
  "itertools",
@@ -1829,6 +1840,7 @@ dependencies = [
  "base64 0.13.0",
  "chrono",
  "concread",
+ "dashmap 5.0.0",
  "lazy_static",
  "num_cpus 0.2.13",
  "poem",
@@ -2276,6 +2288,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
 dependencies = [
  "getrandom 0.2.3",
+ "serde",
 ]
 
 [[package]]
