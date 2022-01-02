@@ -126,7 +126,6 @@ impl From<String> for Detail {
 #[derive(ApiResponse)]
 pub enum JsonResponse {
     /// The request was a success.
-    #[allow(unused)]
     #[oai(status = 200)]
     Ok,
 

@@ -29,6 +29,7 @@ impl RestApi {
     ///
     /// Emits an event to targets clients.
     #[instrument(name = "event-emitter", skip(self, _token, emitter))]
+    #[oai(path = "/emit", method = "post")]
     pub async fn emit_event(
         &self,
         event: Json<EventPayload>,

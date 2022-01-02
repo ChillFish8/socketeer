@@ -136,6 +136,10 @@ async fn create_tables(session: &scylla::Session) -> anyhow::Result<()> {
     let query_block = include_str!("./scripts/tables.cql");
 
     for query in query_block.split("--") {
+        if query.is_empty() {
+            continue;
+        }
+
         info!("executing {}", query.replace("\r\n", "").replace("    ", " "));
         session.query(
             query,
