@@ -42,6 +42,7 @@ impl RestApi {
                 data: event.0.data,
             },
         )?;
+
         Ok(JsonResponse::Ok)
     }
 }

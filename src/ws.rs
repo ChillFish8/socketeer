@@ -1,3 +1,4 @@
+use futures_util::SinkExt;
 use poem::{handler, web::{
     websocket::{Message, WebSocket},
     Data, Query,
@@ -5,9 +6,11 @@ use poem::{handler, web::{
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use tokio::sync::broadcast::error::RecvError;
 use uuid::Uuid;
 
 use crate::db::Session;
+
 
 
 #[derive(Serialize, Debug, Clone)]
@@ -62,8 +65,51 @@ pub async fn gateway(
     emitter.register_room(room_id.clone());
     let mut receiver = emitter.get_subscriber(&room_id);
 
-    let resp = ws.on_upgrade(move |socket| async move {
+    let resp = ws.on_upgrade(move |mut socket| async move {
+        let mut lag_count = 0;
+        loop {
+            while let Ok(event) = receiver.try_recv() {
+                let msg = Message::Binary(serde_json::to_vec(&event).unwrap());
+                if socket.feed(msg).await.is_err() {
+                    break;
+                };
+            }
 
+            match receiver.recv().await {
+                Ok(event) => {
+                    let msg = Message::Binary(serde_json::to_vec(&event).unwrap());
+                    if socket.feed(msg).await.is_err() {
+                        break;
+                    };
+                },
+                Err(RecvError::Lagged(n)) => {
+                    warn!("User {} connection is lagging behind, {} events skipped.", &user.id, n);
+
+                    lag_count += 1;
+
+                    if lag_count > 3 {
+                        warn!("Aborting user connection {} due to too many lagged events.", &user.id);
+                        let _ = socket.send(
+                            Message::Binary(serde_json::to_vec(&Event {
+                                type_: "CLOSE".to_string(),
+                                data: Value::Null,
+                            }).unwrap())
+                        ).await;
+                        break;
+                    }
+
+                    continue;
+                }
+                Err(_) => break,
+            };
+
+            if let Err(e) = socket.flush().await {
+                error!("Aborting connection due to flush error {}", e);
+                break;
+            };
+        }
+
+        let _ = socket.close().await;
     }).into_response();
 
     Ok(resp)

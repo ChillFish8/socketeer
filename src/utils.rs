@@ -3,7 +3,6 @@ use std::fmt::{Display, Formatter};
 use std::ops::Deref;
 use std::str::FromStr;
 use poem::Request;
-use poem_openapi::payload::Json;
 use poem_openapi::types::{ParseError, ParseFromJSON, ParseResult, ToJSON, Type};
 use poem_openapi::{Object, ApiResponse, SecurityScheme};
 use poem_openapi::auth::Bearer;
@@ -127,6 +126,7 @@ impl From<String> for Detail {
 #[derive(ApiResponse)]
 pub enum JsonResponse {
     /// The request was a success.
+    #[allow(unused)]
     #[oai(status = 200)]
     Ok,
 

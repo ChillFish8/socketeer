@@ -1841,6 +1841,7 @@ dependencies = [
  "chrono",
  "concread",
  "dashmap 5.0.0",
+ "futures-util",
  "lazy_static",
  "num_cpus 0.2.13",
  "poem",

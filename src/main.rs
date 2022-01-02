@@ -62,7 +62,7 @@ async fn main() -> anyhow::Result<()> {
         )
         .around(log)
         .data(session)
-        .data(EmitterManager::new())
+        .data(EmitterManager::start())
         .data(Arc::new(cache));
 
     Server::new(TcpListener::bind("127.0.0.1:8800"))
